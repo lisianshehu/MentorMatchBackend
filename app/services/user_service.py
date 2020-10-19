@@ -13,6 +13,3 @@ class UserService:
             'message': 'Successfully registered'
         }
         return response_object, 201
-
-
-
