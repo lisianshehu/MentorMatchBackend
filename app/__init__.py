@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_dynamo import Dynamo
 from flask_restplus import Api
+from flask_cors import CORS
 
 from .config import config_by_name
 
@@ -9,14 +10,15 @@ def create_app(config_name):
 
     app = Flask(__name__)
     api = Api()
+    CORS(app)
     app.config.from_object(config_by_name[config_name])
     app.config['DYNAMO_TABLES'] = [
         dict(
             TableName='Users',
-            KeySchema=[dict(AttributeName='user_name', KeyType='HASH')],
-            AttributeDefinitions=[dict(AttributeName='user_pass', AttributeType='S'),
-                                  dict(AttributeName='user_first_name', AttributeType='S'),
-                                  dict(AttributeName='user_last_name', AttributeType='S')]
+            KeySchema=[dict(AttributeName='username', KeyType='HASH')],
+            AttributeDefinitions=[dict(AttributeName='password', AttributeType='S'),
+                                  dict(AttributeName='firstname', AttributeType='S'),
+                                  dict(AttributeName='lastname', AttributeType='S')]
             # ProvisionedThroughput = dict(ReadCapacityUnits=5, WriteCapacityUnits=5)
     )
     ]
