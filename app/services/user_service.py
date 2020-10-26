@@ -11,6 +11,7 @@ class UserService:
         if 'Item' in item_response:
             return {'status': 'failed', 'message': 'User already exists'}
 
+        user_data['password'] = User().hash_password(user_data['password'])
         self.user_table.put_item(Item=user_data)
         response_object = {
             'status': 'success',

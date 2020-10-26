@@ -2,6 +2,7 @@ from flask import Flask
 from flask_dynamo import Dynamo
 from flask_restplus import Api
 from flask_cors import CORS
+from flask_bcrypt import Bcrypt
 
 from .config import config_by_name
 
@@ -10,6 +11,7 @@ def create_app(config_name):
 
     app = Flask(__name__)
     api = Api()
+    bcrypt = Bcrypt()
     CORS(app)
     app.config.from_object(config_by_name[config_name])
     app.config['DYNAMO_TABLES'] = [
@@ -31,5 +33,5 @@ def create_app(config_name):
         api.add_namespace(user_ns, path='/user')
 
         api.init_app(app)
-
+        bcrypt.init_app(app)
     return app
