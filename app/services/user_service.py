@@ -15,6 +15,8 @@ class UserService:
             stored_hashed_password = item_response['Item']['password']
             return stored_hashed_password
 
+        return None
+
     def create_user(self, user_data):
         item_response = self.user_table.get_item(Key={'user_name': user_data['user_name']})
         if 'Item' in item_response:
@@ -33,9 +35,14 @@ class UserService:
         password = user_data['password']
         item_response = self.user_table.get_item(Key={'user_name': user_data['user_name']})
         print(type(password))
-        if 'Item' in item_response and self.user_model.check_password_hash(self.get_user_password(user_name), str(password)):
-            expires = datetime.timedelta(days=7)
-            auth_token = create_access_token(identity=str(user_name), expires_delta=expires)
-            if auth_token:
-                return {'status': 'success', 'message': 'Successfully logged-in'}, 200
+        try:
+            if 'Item' in item_response and self.user_model.check_password_hash(self.get_user_password(user_name), str(password)):
+                expires = datetime.timedelta(days=7)
+                auth_token = create_access_token(identity=str(user_name), expires_delta=expires)
+                if auth_token:
+                    return {'status': 'success', 'message': 'Successfully logged-in'}, 200
+
+            return {'status': 'failed', 'message': 'Failed logged-in'}
+        except Exception as e:
+            return {'status': 'failed', 'message': 'Failed logged-in: '.format(e)}
 
