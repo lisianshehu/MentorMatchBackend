@@ -3,6 +3,7 @@ from flask_dynamo import Dynamo
 from flask_restplus import Api
 from flask_cors import CORS
 from flask_bcrypt import Bcrypt
+from flask_jwt_extended import JWTManager
 
 from .config import config_by_name
 
@@ -13,7 +14,9 @@ def create_app(config_name):
     api = Api()
     bcrypt = Bcrypt()
     CORS(app)
+    jwt = JWTManager()
     app.config.from_object(config_by_name[config_name])
+    app.config.from_envvar('JWT_ENV_FILE')
     app.config['DYNAMO_TABLES'] = [
         dict(
             TableName='Users',
@@ -27,6 +30,7 @@ def create_app(config_name):
 
     dynamo = Dynamo()
     with app.app_context():
+        # cors.init_app(app)
         dynamo.init_app(app)
 
         from app.controllers.user_controller import api as user_ns
@@ -34,4 +38,5 @@ def create_app(config_name):
 
         api.init_app(app)
         bcrypt.init_app(app)
+        jwt.init_app(app)
     return app
