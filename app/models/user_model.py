@@ -10,7 +10,8 @@ class User(DynamoDB):
         self.password_hashed = None
 
     def hash_password(self, password):
-        self.password_hashed = generate_password_hash(password).decode()
+        self.password_hashed = generate_password_hash(password).decode('utf-8')
+        return self.password_hashed
 
-    def check_password_hash(self, password):
-        return check_password_hash(self.password_hashed, password)
+    def check_password_hash(self, hashed_password, password):
+        return check_password_hash(hashed_password, password)
