@@ -32,4 +32,5 @@ class UserLogin(Resource):
         print("post request to login")
         user_data = request.get_json()
         response = user_service.login_user(user_data=user_data)
+        # print(response)
         return response

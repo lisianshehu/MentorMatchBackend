@@ -7,11 +7,10 @@ class User(DynamoDB):
     def __init__(self):
         super().__init__()
         self.user_table = self.tables['Users']
-        self.password_hashed = None
 
     def hash_password(self, password):
-        self.password_hashed = generate_password_hash(password).decode('utf-8')
-        return self.password_hashed
+        return generate_password_hash(password).decode()
 
-    def check_password_hash(self, hashed_password, password):
+    def check_password(self, hashed_password, password):
+        print(check_password_hash(hashed_password, password))
         return check_password_hash(hashed_password, password)

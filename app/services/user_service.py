@@ -1,5 +1,5 @@
 from app.models.user_model import User
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, create_refresh_token, set_access_cookies, set_refresh_cookies
 import datetime
 
 
@@ -13,9 +13,10 @@ class UserService:
         item_response = self.user_table.get_item(Key={'user_name': user_name})
         if 'Item' in item_response:
             stored_hashed_password = item_response['Item']['password']
+            print(stored_hashed_password)
             return stored_hashed_password
 
-        return None
+        raise Exception("User does not exist")
 
     def create_user(self, user_data):
         item_response = self.user_table.get_item(Key={'user_name': user_data['user_name']})
@@ -34,15 +35,16 @@ class UserService:
         user_name = user_data['user_name']
         password = user_data['password']
         item_response = self.user_table.get_item(Key={'user_name': user_data['user_name']})
-        print(type(password))
-        try:
-            if 'Item' in item_response and self.user_model.check_password_hash(self.get_user_password(user_name), str(password)):
-                expires = datetime.timedelta(days=7)
-                auth_token = create_access_token(identity=str(user_name), expires_delta=expires)
-                if auth_token:
-                    return {'status': 'success', 'message': 'Successfully logged-in'}, 200
+        print(item_response)
+        if 'Item' in item_response and self.user_model.check_password(self.get_user_password(user_name), password):
+            expires = datetime.timedelta(days=7)
+            auth_token = create_access_token(identity=str(user_name), expires_delta=expires)
+            print("here: ", auth_token)
+            if auth_token is not None:
+                response = {'status': 'success', 'message': 'Successfully logged-in', 'token': auth_token}
+                print(response)
+                return response, 200
 
-            return {'status': 'failed', 'message': 'Failed logged-in'}
-        except Exception as e:
-            return {'status': 'failed', 'message': 'Failed logged-in: '.format(e)}
+        return {'status': 'failed', 'message': 'Failed logged-in'}
+
 
