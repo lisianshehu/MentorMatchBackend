@@ -1,0 +1,9 @@
+flask
+flask-restplus
+flask_script
+boto3
+flask-dynamo
+flask-cors
+flask-jwt-extended
+flask-bcrypt
+Werkzeug==0.16.1
