@@ -34,3 +34,13 @@ class UserLogin(Resource):
         response = user_service.login_user(user_data=user_data)
         # print(response)
         return response
+
+
+@api.route('/search/')
+class UserSearch(Resource):
+
+    def post(self):
+        print("post request to search")
+        username_input = request.get_json()['inputUsername']
+        response = user_service.search_user(user_to_search=username_input)
+        return response
