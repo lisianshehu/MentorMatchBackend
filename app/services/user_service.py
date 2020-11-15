@@ -47,4 +47,12 @@ class UserService:
 
         return {'status': 'failed', 'message': 'Failed logged-in'}
 
+    def search_user(self, user_to_search):
+        item_response = self.user_table.get_item(Key={'user_name': user_to_search})
+        if 'Item' in item_response:
+            response = {'status': 'success', 'message': 'Search successful', 'username': item_response['Item']['user_name']}
+            return response
+        else:
+            return {'status': 'failed', 'message': 'User does not exist'}
+
 
