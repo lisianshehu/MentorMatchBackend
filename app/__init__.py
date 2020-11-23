@@ -7,20 +7,61 @@ from flask_jwt_extended import ( JWTManager, jwt_required, create_access_token,
     jwt_refresh_token_required, create_refresh_token,
     get_jwt_identity, set_access_cookies,
     set_refresh_cookies, unset_jwt_cookies )
+from flask_socketio import SocketIO, join_room, leave_room
 import os
 
 from .config import config_by_name
 
+socket = SocketIO()
+
+@socket.on('connect')
+def on_connect():
+    print("connected to socket!")
+
+@socket.on('disconnect')
+def on_disconnect():
+    print("disconnected to socket!")
+
+@socket.on('join')
+def on_join(data):
+    print("joining private room")
+    user_list = []
+    print(data['target_user'])
+    initiated_chat_user = data['current_user']
+    target_user = data['target_user']
+    user_list.append(initiated_chat_user)
+    user_list.append(target_user)
+    user_list = sorted(user_list)
+    print(user_list)
+    room_based_off_users = ''.join(user_list)
+    print(room_based_off_users)
+    join_room(room_based_off_users)
+
+
+@socket.on('send_message')
+def on_message(data):
+    user_list = sorted([data['current_user'], data['target_user']])
+    target_room = ''.join(user_list)
+    message = data['message']
+    print('sending message: {}'.format(message))
+    print(target_room)
+    socket.emit('message', {'message': message, 'user': data['current_user']}, room=target_room)
+
+# @socket.on('leave')
+# def on_leave(data):
+#     # room = data['room']
+#     # leave_room(room)
 
 def create_app(config_name):
 
     app = Flask(__name__)
+    app.host = 'localhost'
     api = Api()
     flask_bcrypt = Bcrypt()
     CORS(app)
     jwt = JWTManager()
     app.config.from_object(config_by_name[config_name])
-    app.config.from_envvar('JWT_ENV_FILE')
+    # app.config.from_envvar('JWT_ENV_FILE')
     app.config['JWT_TOKEN_LOCATION'] = ['cookies']
     app.config['JWT_COOKIE_SECURE'] = False
     app.config['JWT_COOKIE_CSRF_PROTECT'] = True
@@ -49,4 +90,6 @@ def create_app(config_name):
         api.init_app(app)
         flask_bcrypt.init_app(app)
         jwt.init_app(app)
+        socket.init_app(app, cors_allowed_origins="*")
+
     return app
