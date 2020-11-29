@@ -47,10 +47,6 @@ def on_message(data):
     print(target_room)
     socket.emit('message', {'message': message, 'user': data['current_user']}, room=target_room)
 
-# @socket.on('leave')
-# def on_leave(data):
-#     # room = data['room']
-#     # leave_room(room)
 
 def create_app(config_name):
 
@@ -61,7 +57,6 @@ def create_app(config_name):
     CORS(app)
     jwt = JWTManager()
     app.config.from_object(config_by_name[config_name])
-    # app.config.from_envvar('JWT_ENV_FILE')
     app.config['JWT_TOKEN_LOCATION'] = ['cookies']
     app.config['JWT_COOKIE_SECURE'] = False
     app.config['JWT_COOKIE_CSRF_PROTECT'] = True
