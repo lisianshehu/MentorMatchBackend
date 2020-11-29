@@ -36,6 +36,16 @@ class UserLogin(Resource):
         return response
 
 
+@api.route('/logout/')
+class UserLogout(Resource):
+
+    def post(self):
+        print("logging out")
+        user_data = request.get_json()
+        response = user_service.logout_user(user_data=user_data)
+        return response
+
+
 @api.route('/search/')
 class UserSearch(Resource):
 

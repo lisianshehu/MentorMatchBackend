@@ -1,9 +1,10 @@
 flask
 flask-restplus
-flask_script
+Flask-Script
 boto3
 flask-dynamo
 flask-cors
 flask-jwt-extended
-flask-bcrypt
+Flask-Bcrypt
+Flask-SocketIO==4.3.1
 Werkzeug==0.16.1
