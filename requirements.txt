@@ -1,0 +1,10 @@
+flask
+flask-restplus
+Flask-Script
+boto3
+flask-dynamo
+flask-cors
+flask-jwt-extended
+Flask-Bcrypt
+Flask-SocketIO==4.3.1
+Werkzeug==0.16.1
